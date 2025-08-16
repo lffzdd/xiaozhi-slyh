@@ -16,17 +16,18 @@ server:
   # 当你使用docker部署或使用公网部署(使用ssl、域名)时，不一定准确
   # 所以如果你使用docker部署时，将vision_explain设置成局域网地址
   # 如果你使用公网部署时，将vision_explain设置成公网地址
-  vision_explain: http://192.168.0.132:8003/mcp/vision/explain
+  # websocket: ws://192.168.1.100:8000/xiaozhi/v1/
+  vision_explain: http://192.168.0.108:8003/mcp/vision/explain
   # redis 配置
   redis:
     enabled: true       # 【重要】将这里设置为 true 来启用消息发布功能
-    host: '192.168.0.125'   # Redis 服务器地址
+    host: '192.168.0.108'   # Redis 服务器地址
     port: 6379          # Redis 端口
     password: ''        # 如果有密码，在这里填写
     db: 1               # 为 xiaozhi-server 指定使用 1
 manager-api:
   # 你的manager-api的地址，最好使用局域网ip
   # 如果使用docker部署，请使用填写成 http://xiaozhi-esp32-server-web:8002/xiaozhi
-  url: http://192.168.0.132:8002/xiaozhi
+  url: http://192.168.0.108:8002/xiaozhi
   # 你的manager-api的token，就是刚才复制出来的server.secret
-  secret: 0fc6353c-f93b-476d-a214-a42d9715984c
+  secret: 019d641b-cbfc-4d73-8d4c-f67012a09160

@@ -15,9 +15,9 @@ async def init_postgresql_pool():
     global db_pool
     # 数据库连接池
     db_pool = await asyncpg.create_pool(
-        user='lff',
-        password='666666',
-        database='xiaozhi_server',
+        user='root',
+        password='123456',
+        database='chat_db',
         host='localhost',  # 或者你的数据库服务器地址
         port=5432  # PostgreSQL 默认端口
     )
