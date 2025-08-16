@@ -3,6 +3,10 @@ import asyncio
 import time
 from core.providers.tts.dto.dto import SentenceType
 from core.utils import textUtils
+# 导入我们的发布工具和异步任务创建
+from core.utils.my_mq_publisher import publish_message
+
+
 
 TAG = __name__
 
@@ -11,6 +15,21 @@ async def sendAudioMessage(conn, sentenceType, audios, text):
     # 发送句子开始消息
     conn.logger.bind(tag=TAG).info(f"发送音频消息: {sentenceType}, {text}")
 
+    # --- 在这里发布AI的回复 ---
+    # 我们只在第一句或最后一句时记录，避免重复
+    # if text and (sentenceType == SentenceType.FIRST or sentenceType == SentenceType.LAST):
+    if text:
+        message_to_publish = {
+            "type": "ai_output",
+            "session_id": conn.session_id,
+            "device_id": conn.device_id,
+            "text": text,
+            "timestamp": time.time()
+        }
+        # 使用 create_task 确保发布动作不阻塞主流程
+        asyncio.create_task(publish_message('xiaozhi_interactions', message_to_publish))
+    # --- 添加结束 ---
+    
     pre_buffer = False
     if conn.tts.tts_audio_first_sentence and text is not None:
         conn.logger.bind(tag=TAG).info(f"发送第一段语音: {text}")
@@ -99,6 +118,18 @@ async def send_stt_message(conn, text):
         return
 
     """发送 STT 状态消息"""
+    
+    # --- 在这里发布用户的输入 ---
+    message_to_publish = {
+        "type": "user_input",
+        "session_id": conn.session_id,
+        "device_id": conn.device_id,
+        "text": text, # 记录原始识别文本
+        "speaker": conn.current_speaker, # 记录说话人
+        "timestamp": time.time()
+    }
+    asyncio.create_task(publish_message('xiaozhi_interactions', message_to_publish))
+    # --- 添加结束 ---
     
     # 解析JSON格式，提取实际的用户说话内容
     display_text = text

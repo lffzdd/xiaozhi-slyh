@@ -660,6 +660,7 @@ class ConnectionHandler:
 
     def chat(self, query, tool_call=False, depth=0):
         self.logger.bind(tag=TAG).info(f"大模型收到用户消息: {query}")
+
         self.llm_finish_task = False
 
         if not tool_call:

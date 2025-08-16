@@ -10,6 +10,9 @@ from core.http_server import SimpleHttpServer
 from core.websocket_server import WebSocketServer
 from core.utils.util import check_ffmpeg_installed
 
+# 导入我们创建的 Redis 发布者
+from core.utils.my_mq_publisher import init_redis_pool
+
 TAG = __name__
 logger = setup_logging()
 
@@ -42,9 +45,21 @@ async def monitor_stdin():
         await ainput()  # 异步等待输入，消费回车
 
 
-async def main():
+async def main() -> None:
     check_ffmpeg_installed()
     config = load_config()
+
+    # --- 在这里添加 Redis 初始化 ---
+    # redis_config = config.get("redis", {})
+    # if redis_config.get("enabled", True):  # 允许通过配置开关
+    #     init_redis_pool(
+    #         host=redis_config.get("host", "localhost"),
+    #         port=redis_config.get("port", 6379),
+    #         db=redis_config.get("db", 1),
+    #     )
+    
+    init_redis_pool()
+    # --- 添加结束 ---
 
     # 默认使用manager-api的secret作为auth_key
     # 如果secret为空，则生成随机密钥
