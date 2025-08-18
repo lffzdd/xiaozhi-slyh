@@ -47,6 +47,15 @@ async def sendAudioMessage(conn, sentenceType, audios, text):
         await send_tts_message(conn, "stop", None)
         conn.client_is_speaking = False
         if conn.close_after_chat:
+            # # --- 在这里发布会话结束消息 ---
+            # end_message = {
+            #     "type": "session_end",
+            #     "session_id": conn.session_id,
+            #     "device_id": conn.device_id,
+            #     "timestamp": time.time()
+            # }
+            # asyncio.create_task(publish_message('xiaozhi_interactions', end_message))
+            # # --- 添加结束 ---
             await conn.close()
 
 

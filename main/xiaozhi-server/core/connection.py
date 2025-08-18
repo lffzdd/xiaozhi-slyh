@@ -40,6 +40,7 @@ from config.manage_api_client import DeviceNotFoundException, DeviceBindExceptio
 from core.utils.prompt_manager import PromptManager
 from core.utils.voiceprint_provider import VoiceprintProvider
 from core.utils import textUtils
+from core.utils.my_mq_publisher import publish_message
 
 TAG = __name__
 
@@ -238,6 +239,18 @@ class ConnectionHandler:
     async def _save_and_close(self, ws):
         """保存记忆并关闭连接"""
         try:
+            # --- 在这里发布会话结束消息 ---
+            # 确保无论如何断开连接，都能触发总结
+            end_message = {
+                "type": "session_end",
+                "session_id": self.session_id,
+                "device_id": self.device_id,
+                "timestamp": time.time()
+            }
+            asyncio.create_task(publish_message('xiaozhi_interactions', end_message))
+            self.logger.bind(tag=TAG).info(f"会话 {self.session_id} 结束，已发送总结任务。")
+            # --- 添加结束 ---
+
             if self.memory:
                 # 使用线程池异步保存记忆
                 def save_memory_task():
