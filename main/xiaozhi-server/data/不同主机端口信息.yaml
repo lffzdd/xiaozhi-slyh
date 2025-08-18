@@ -1,0 +1,9 @@
+slyhhezi:
+  host: 192.168.0.125
+  port: 9090
+  secret: 0fc6353c-f93b-476d-a214-a42d9715984c
+
+slyh3090:
+  host: 192.168.0.108
+  port: 9090
+  secret: 019d641b-cbfc-4d73-8d4c-f67012a09160
